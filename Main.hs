@@ -1,2 +1,8 @@
+import           System.Process
+
 main :: IO ()
-main = putStrLn "Hello world!"
+main = generateRaw 3 >>= putStrLn
+
+
+generateRaw :: Integer -> IO String
+generateRaw n = readProcess "./generator" [show n] ""
