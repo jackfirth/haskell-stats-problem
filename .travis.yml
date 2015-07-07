@@ -1,9 +1,14 @@
 language: haskell
 ghc: 7.8
+sudo: required
 
 before_install:
   - chmod +x ./generator
 
+before_script:
+  - sudo apt-get update
+  - sudo apt-get install libc6:i386 libstdc++6:i386
+
 script:
-  - sudo ./generator 5
+  - ./generator 5
   - cabal configure --enable-tests && cabal build && cabal test
