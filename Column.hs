@@ -1,5 +1,5 @@
 module Column (
-  DataColumn,
+  DataColumn(TextColumn, NumberColumn),
   dataRowsToColumns
 ) where
 
