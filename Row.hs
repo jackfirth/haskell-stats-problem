@@ -8,7 +8,7 @@ import           Data.List.Split
 import           Header
 
 
-data DataRow = DataRow [Datum]
+data DataRow = DataRow [Datum] deriving Show
 data Datum = TextDatum String | NumberDatum Float deriving Show
 
 
