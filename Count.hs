@@ -1,4 +1,4 @@
-module Stats (
+module Count (
   columnCount,
   columnNullCount
 ) where
@@ -7,12 +7,10 @@ import           Column
 
 
 columnCount :: DataColumn -> Int
-columnCount (TextColumn _ items) = length items
-columnCount (NumberColumn _ items) = length items
+columnCount = callColumn length
 
 columnNullCount :: DataColumn -> Int
-columnNullCount (TextColumn _ items) = numNothings items
-columnNullCount (NumberColumn _ items) = numNothings items
+columnNullCount = callColumn numNothings
 
 numNothings :: [Maybe a] -> Int
 numNothings = sum . map maybeToInt

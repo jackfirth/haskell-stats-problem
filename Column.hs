@@ -1,5 +1,10 @@
+{-# LANGUAGE RankNTypes #-}
+
 module Column (
   DataColumn(TextColumn, NumberColumn),
+  callColumn,
+  callNumberColumn,
+  callTextColumn,
   dataRowsToColumns
 ) where
 
@@ -8,6 +13,18 @@ import           Header
 import           Row
 
 data DataColumn = TextColumn String [Maybe String] | NumberColumn String [Maybe Float] deriving Show
+
+callColumn :: (forall a. [Maybe a] -> b) -> DataColumn -> b
+callColumn f (TextColumn _ xs) = f xs
+callColumn f (NumberColumn _ xs) = f xs
+
+callNumberColumn :: ([Maybe Float] -> a) -> DataColumn -> a
+callNumberColumn _ (TextColumn _ _) = error "expected number column"
+callNumberColumn f (NumberColumn _ xs) = f xs
+
+callTextColumn :: ([Maybe String] -> a) -> DataColumn -> a
+callTextColumn f (TextColumn _ xs) = f xs
+callTextColumn _ (NumberColumn _ _) = error "expected text column"
 
 dataRowsToColumns :: [ColumnHeader] -> [DataRow] -> [DataColumn]
 dataRowsToColumns headers rows = zipWith packDataIntoColumn headers (unpackDataRows headers rows)
