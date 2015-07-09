@@ -1,7 +1,7 @@
 import           Column
+import           Count
 import           Header
 import           Row
-import           Stats
 import           System.Process
 
 main :: IO ()
