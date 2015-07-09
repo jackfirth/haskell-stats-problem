@@ -8,15 +8,18 @@ import           Data.List.Split
 import           Header
 
 
-type DataRow = [Datum]
+data DataRow = DataRow [Datum]
 data Datum = TextDatum String | NumberDatum Float deriving Show
 
 
 rawGeneratedDataToRows :: [ColumnHeader] -> String -> [DataRow]
-rawGeneratedDataToRows headers = map (dataLineToRow (map headerType headers)) . drop 1 . lines
+rawGeneratedDataToRows headers = map (parseDataLine headers) . drop 1 . lines
+
+parseDataLine :: [ColumnHeader] -> String -> DataRow
+parseDataLine headers = dataLineToRow (map headerType headers)
 
 dataLineToRow :: [ColumnType] -> String -> DataRow
-dataLineToRow headers line = zipWith parseLineItem headers (splitOn "," line)
+dataLineToRow headers = DataRow . zipWith parseLineItem headers . splitOn ","
 
 parseLineItem :: ColumnType -> String -> Datum
 parseLineItem NumberColumn = NumberDatum . read
