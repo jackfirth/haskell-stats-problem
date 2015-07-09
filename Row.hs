@@ -1,6 +1,6 @@
 module Row (
-  DataRow,
-  Datum,
+  DataRow(DataRow),
+  Datum(TextDatum, NumberDatum),
   rawGeneratedDataToRows
 ) where
 
@@ -22,5 +22,5 @@ dataLineToRow :: [ColumnType] -> String -> DataRow
 dataLineToRow headers = DataRow . zipWith parseLineItem headers . splitOn ","
 
 parseLineItem :: ColumnType -> String -> Datum
-parseLineItem NumberColumn = NumberDatum . read
-parseLineItem TextColumn = TextDatum
+parseLineItem NumberType = NumberDatum . (read :: String -> Float)
+parseLineItem TextType = TextDatum
