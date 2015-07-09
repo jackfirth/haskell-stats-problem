@@ -1,6 +1,7 @@
 module Header (
-  ColumnType,
+  ColumnType(NumberColumn, TextColumn),
   ColumnHeader,
+  headerType,
   rawGeneratedDataHeaders
 ) where
 
@@ -8,8 +9,11 @@ import           Data.Char
 import           Data.List.Split
 
 
-data ColumnType = Number | Text deriving Show
+data ColumnType = NumberColumn | TextColumn deriving Show
 data ColumnHeader = ColumnHeader String ColumnType deriving Show
+
+headerType :: ColumnHeader -> ColumnType
+headerType (ColumnHeader _ typeName) = typeName
 
 rawGeneratedDataHeaders :: String -> [ColumnHeader]
 rawGeneratedDataHeaders = map parseHeader . splitRawColumnInfo . firstLine
@@ -39,6 +43,6 @@ filterWhitespace :: String -> String
 filterWhitespace = filter (not . isSpace)
 
 makeHeader :: (String, String) -> ColumnHeader
-makeHeader (name, "number") = ColumnHeader name Number
-makeHeader (name, "text") = ColumnHeader name Text
+makeHeader (name, "number") = ColumnHeader name NumberColumn
+makeHeader (name, "text") = ColumnHeader name TextColumn
 makeHeader (name, unknown) = error ("Unknown column type " ++ unknown ++ " in column " ++ name)
