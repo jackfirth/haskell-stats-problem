@@ -1,6 +1,12 @@
 language: haskell
 ghc: 7.8
 
+before_install:
+  - wget -O generator.zip https://s3.amazonaws.com/challenge.wagon/generator-linux.zip
+  - unzip generator.zip
+  - chmod +x generator
+  - generator 10
+
 script:
   - cabal configure --enable-tests && cabal build && cabal test
   - cabal run
