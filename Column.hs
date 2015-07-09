@@ -7,7 +7,7 @@ import           Data.List
 import           Header
 import           Row
 
-data DataColumn = TextColumn String [String] | NumberColumn String [Float] deriving Show
+data DataColumn = TextColumn String [Maybe String] | NumberColumn String [Maybe Float] deriving Show
 
 dataRowsToColumns :: [ColumnHeader] -> [DataRow] -> [DataColumn]
 dataRowsToColumns headers rows = zipWith packDataIntoColumn headers (unpackDataRows headers rows)
@@ -28,14 +28,14 @@ packDataIntoColumn :: ColumnHeader -> (ColumnType, [Datum]) -> DataColumn
 packDataIntoColumn header (NumberType, dataList) = NumberColumn (headerName header) (numberData dataList)
 packDataIntoColumn header (TextType, dataList) = TextColumn (headerName header) (textData dataList)
 
-numberData :: [Datum] -> [Float]
+numberData :: [Datum] -> [Maybe Float]
 numberData = map getNum where
-  getNum :: Datum -> Float
+  getNum :: Datum -> Maybe Float
   getNum (NumberDatum x) = x
   getNum _ = error "expected number data"
 
-textData :: [Datum] -> [String]
+textData :: [Datum] -> [Maybe String]
 textData = map getText where
-  getText :: Datum -> String
+  getText :: Datum -> Maybe String
   getText (TextDatum s) = s
   getText _ = error "expected text data"
