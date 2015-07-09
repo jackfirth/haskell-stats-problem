@@ -1,6 +1,7 @@
 import           Column
 import           Count
 import           Header
+import           NumStats
 import           Row
 import           System.Process
 
