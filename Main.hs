@@ -1,3 +1,4 @@
+import           Data.Char
 import           Data.List.Split
 import           System.Process
 
@@ -10,7 +11,8 @@ main = do
 generateRaw :: Integer -> IO String
 generateRaw n = readProcess "./generator" [show n] ""
 
-data ColumnHeader = ColumnHeader String String deriving Show
+data ColumnType = Number | Text deriving Show
+data ColumnHeader = ColumnHeader String ColumnType deriving Show
 
 rawGeneratedDataHeader :: String -> [ColumnHeader]
 rawGeneratedDataHeader = map parseHeader . splitRawColumnInfo . firstLine
@@ -23,4 +25,23 @@ splitRawColumnInfo :: String -> [String]
 splitRawColumnInfo = splitOn ","
 
 parseHeader :: String -> ColumnHeader
-parseHeader _ = error "not implemented"
+parseHeader = makeHeader . stringRecordToNameAndType . removeQuotes
+
+
+removeQuotes :: String -> String
+removeQuotes = filter (/= '"')
+
+stringRecordToNameAndType :: String -> (String, String)
+stringRecordToNameAndType s = let (name:typeName:_) = splitOnOpenParen s in
+  (name, typeName)
+
+splitOnOpenParen :: String -> [String]
+splitOnOpenParen = map filterWhitespace . splitOn "(" . filter (/= ')')
+
+filterWhitespace :: String -> String
+filterWhitespace = filter (not . isSpace)
+
+makeHeader :: (String, String) -> ColumnHeader
+makeHeader (name, "number") = ColumnHeader name Number
+makeHeader (name, "text") = ColumnHeader name Text
+makeHeader (name, unknown) = error ("Unknown column type " ++ unknown ++ " in column " ++ name)
