@@ -7,15 +7,19 @@ import           System.Process
 
 main :: IO ()
 main = do
-  raw <- generateRaw 10000
-  let headers = rawGeneratedDataHeaders raw
-  let rows = rawGeneratedDataToRows headers raw
-  let columns = dataRowsToColumns headers rows
+  columns <- generateDataColumns 10000
   printColumnsStat (map columnCount) "Counts" columns
   printColumnsStat (map columnNullCount) "Null counts" columns
   printColumnsStat (mapOverNumColumns columnMin) "Number column minimums" columns
   printColumnsStat (mapOverNumColumns columnMax) "Number column maximums" columns
   printColumnsStat (mapOverNumColumns columnAverage) "Number column averages" columns
+
+generateDataColumns :: Integer -> IO [DataColumn]
+generateDataColumns n = do
+  raw <- generateRaw n
+  let headers = rawGeneratedDataHeaders raw
+  let rows = rawGeneratedDataToRows headers raw
+  return (dataRowsToColumns headers rows)
 
 printColumnsStat :: Show a => ([DataColumn] -> a) -> String -> [DataColumn] -> IO ()
 printColumnsStat f description columns = print (description ++ ": " ++ show (f columns))
