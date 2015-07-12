@@ -20,10 +20,13 @@ parseDataLine :: [ColumnHeader] -> String -> DataRow
 parseDataLine headers = dataLineToRow (map headerType headers)
 
 dataLineToRow :: [ColumnType] -> String -> DataRow
-dataLineToRow headers = DataRow . zipWith parseLineItem headers . map filterWhitespace . splitOn ","
+dataLineToRow headers = DataRow . zipWith parseLineItem headers . map (removeQuotes . filterWhitespace) . splitOn ","
 
 filterWhitespace :: String -> String
 filterWhitespace = filter (not . isSpace)
+
+removeQuotes :: String -> String
+removeQuotes = filter (/= '"')
 
 parseLineItem :: ColumnType -> String -> Datum
 parseLineItem NumberType "" = NumberDatum Nothing

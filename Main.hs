@@ -1,5 +1,6 @@
 import           Column
 import           Count
+import           DistinctCount
 import           Header
 import           NumStats
 import           Row
@@ -17,6 +18,7 @@ main = do
   printColumnsStat (mapOverTextColumns columnShortestCount) "Text column shortest item count" columns
   printColumnsStat (mapOverTextColumns columnLongestCount) "Text column longest item count" columns
   printColumnsStat (mapOverTextColumns columnAverageLength) "Text column average length count" columns
+  printColumnsStat (mapOverTextColumns columnDistinctCounts) "Text column distinct items count" columns
 
 generateDataColumns :: Integer -> IO [DataColumn]
 generateDataColumns n = do
