@@ -1,7 +1,8 @@
 module NumStats (
   columnMin,
   columnMax,
-  columnAverage
+  columnAverage,
+  mapOverNumColumns
 ) where
 
 import           Column
@@ -15,6 +16,9 @@ columnMax = callNumberColumn maximum
 
 columnAverage :: DataColumn -> Maybe Float
 columnAverage = callNumberColumn (streamAverage . catMaybes)
+
+mapOverNumColumns :: (DataColumn -> a) -> [DataColumn] -> [a]
+mapOverNumColumns f = map f . filter isNumberColumn
 
 streamAverage :: [Float] -> Maybe Float
 streamAverage [] = Nothing
