@@ -1,29 +1,29 @@
 module TextStats (
   columnShortestCount,
-  mapOverTextColumns
+  mapOverTextColumns,
+  ShortestCount
 ) where
 
 import           Column
 import           Data.Maybe
 
-data ShortestCountStat = ShortestCountStat Int Int | InitialCount
+data ShortestCount = ShortestCount String Int | InitialCount deriving Show
 
-columnShortestCount :: DataColumn -> Int
+columnShortestCount :: DataColumn -> ShortestCount
 columnShortestCount = callTextColumn (shortestCount . catMaybes)
 
-statCount :: ShortestCountStat -> Int
-statCount InitialCount = 0
-statCount (ShortestCountStat _ count) = count
+shortestCount :: [String] -> ShortestCount
+shortestCount = foldr updateShortestCount InitialCount
 
-shortestCount :: [String] -> Int
-shortestCount = statCount . foldr updateShortestCount InitialCount
+updateShortestCount :: String -> ShortestCount -> ShortestCount
+updateShortestCount s InitialCount = ShortestCount s 1
+updateShortestCount s (ShortestCount shortestItem count)
+  | s == shortestItem = ShortestCount shortestItem (count + 1)
+  | strLess s shortestItem = updateShortestCount s InitialCount
+  | otherwise = ShortestCount shortestItem count
 
-updateShortestCount :: String -> ShortestCountStat -> ShortestCountStat
-updateShortestCount s InitialCount = ShortestCountStat (length s) 1
-updateShortestCount s (ShortestCountStat shortestLength count)
-  | length s < shortestLength = updateShortestCount s InitialCount
-  | length s > shortestLength = ShortestCountStat shortestLength count
-  | otherwise = ShortestCountStat shortestLength (count + 1)
+strLess :: String -> String -> Bool
+strLess s1 s2 = length s1 < length s2 || (length s1 == length s2 && s1 < s2)
 
 mapOverTextColumns :: (DataColumn -> a) -> [DataColumn] -> [a]
 mapOverTextColumns f = map f . filter isTextColumn
