@@ -5,6 +5,7 @@ module NumStats (
   mapOverNumColumns
 ) where
 
+import           Average
 import           Column
 import           Data.Maybe
 
@@ -23,6 +24,3 @@ columnAverage = callNumberColumn (maybeAlgebra average . catMaybes)
 
 mapOverNumColumns :: (DataColumn -> a) -> [DataColumn] -> [a]
 mapOverNumColumns f = map f . filter isNumberColumn
-
-average :: [Float] -> Float
-average xs = sum xs / fromIntegral (length xs)

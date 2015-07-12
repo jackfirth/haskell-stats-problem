@@ -15,6 +15,8 @@ main = do
   printColumnsStat (mapOverNumColumns columnMax) "Number column maximums" columns
   printColumnsStat (mapOverNumColumns columnAverage) "Number column averages" columns
   printColumnsStat (mapOverTextColumns columnShortestCount) "Text column shortest item count" columns
+  printColumnsStat (mapOverTextColumns columnLongestCount) "Text column longest item count" columns
+  printColumnsStat (mapOverTextColumns columnAverageLength) "Text column average length count" columns
 
 generateDataColumns :: Integer -> IO [DataColumn]
 generateDataColumns n = do
