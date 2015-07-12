@@ -8,7 +8,7 @@ import           TextStats
 
 main :: IO ()
 main = do
-  columns <- generateDataColumns 10000
+  columns <- generateDataColumns 100000
   printColumnsStat (map columnCount) "Counts" columns
   printColumnsStat (map columnNullCount) "Null counts" columns
   printColumnsStat (mapOverNumColumns columnMin) "Number column minimums" columns
