@@ -4,6 +4,7 @@ import           Header
 import           NumStats
 import           Row
 import           System.Process
+import           TextStats
 
 main :: IO ()
 main = do
@@ -13,6 +14,7 @@ main = do
   printColumnsStat (mapOverNumColumns columnMin) "Number column minimums" columns
   printColumnsStat (mapOverNumColumns columnMax) "Number column maximums" columns
   printColumnsStat (mapOverNumColumns columnAverage) "Number column averages" columns
+  printColumnsStat (mapOverTextColumns columnShortestCount) "Text column shortest item count" columns
 
 generateDataColumns :: Integer -> IO [DataColumn]
 generateDataColumns n = do
