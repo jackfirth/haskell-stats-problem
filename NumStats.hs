@@ -8,18 +8,21 @@ module NumStats (
 import           Column
 import           Data.Maybe
 
+maybeAlgebra :: ([a] -> b) -> [a] -> Maybe b
+maybeAlgebra _ [] = Nothing
+maybeAlgebra f xs = Just (f xs)
+
 columnMin :: DataColumn -> Maybe Float
-columnMin = callNumberColumn minimum
+columnMin = callNumberColumn (maybeAlgebra minimum . catMaybes)
 
 columnMax :: DataColumn -> Maybe Float
-columnMax = callNumberColumn maximum
+columnMax = callNumberColumn (maybeAlgebra maximum . catMaybes)
 
 columnAverage :: DataColumn -> Maybe Float
-columnAverage = callNumberColumn (streamAverage . catMaybes)
+columnAverage = callNumberColumn (maybeAlgebra average . catMaybes)
 
 mapOverNumColumns :: (DataColumn -> a) -> [DataColumn] -> [a]
 mapOverNumColumns f = map f . filter isNumberColumn
 
-streamAverage :: [Float] -> Maybe Float
-streamAverage [] = Nothing
-streamAverage xs = Just (sum xs / fromIntegral (length xs))
+average :: [Float] -> Float
+average xs = sum xs / fromIntegral (length xs)
