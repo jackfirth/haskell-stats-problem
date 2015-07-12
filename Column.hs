@@ -5,6 +5,8 @@ module Column (
   callColumn,
   callNumberColumn,
   callTextColumn,
+  isNumberColumn,
+  isTextColumn,
   dataRowsToColumns
 ) where
 
@@ -25,6 +27,14 @@ callNumberColumn f (NumberColumn _ xs) = f xs
 callTextColumn :: ([Maybe String] -> a) -> DataColumn -> a
 callTextColumn f (TextColumn _ xs) = f xs
 callTextColumn _ (NumberColumn _ _) = error "expected text column"
+
+isNumberColumn :: DataColumn -> Bool
+isNumberColumn (TextColumn _ _) = False
+isNumberColumn (NumberColumn _ _) = True
+
+isTextColumn :: DataColumn -> Bool
+isTextColumn (TextColumn _ _) = True
+isTextColumn (NumberColumn _ _) = False
 
 dataRowsToColumns :: [ColumnHeader] -> [DataRow] -> [DataColumn]
 dataRowsToColumns headers rows = zipWith packDataIntoColumn headers (unpackDataRows headers rows)
