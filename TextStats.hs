@@ -34,10 +34,10 @@ columnLongestCount = callTextColumn (longestCount . catMaybes)
 
 
 shortestCount :: [String] -> ShortestCount
-shortestCount = foldr updateShortestCount InitialShortestCount
+shortestCount = foldl' (flip updateShortestCount) InitialShortestCount
 
 longestCount :: [String] -> LongestCount
-longestCount = foldr updateLongestCount InitialLongestCount
+longestCount = foldl' (flip updateLongestCount) InitialLongestCount
 
 
 updateShortestCount :: String -> ShortestCount -> ShortestCount
