@@ -7,28 +7,58 @@ import           Row
 import           System.Process
 import           TextStats
 
+
+data Stats = Stats {
+  -- counts         :: [Int],
+  nullCounts :: [Int],
+  minNums    :: [Maybe Float],
+  maxNums    :: [Maybe Float]
+  -- averages       :: [Maybe Float],
+  -- shortestCounts :: [ShortestCount],
+  -- longestCounts  :: [LongestCount],
+  -- averageLengths :: [Float]
+} deriving (Show)
+
+calcStats :: [DataColumn] -> Stats
+calcStats columns = Stats {
+  -- counts = map columnCount columns,
+  nullCounts = map columnNullCount columns,
+  minNums = mapOverNumColumns columnMin columns,
+  maxNums = mapOverNumColumns columnMax columns
+  -- averages = mapOverNumColumns columnAverage columns,
+  -- shortestCounts = mapOverTextColumns columnShortestCount columns,
+  -- longestCounts = mapOverTextColumns columnLongestCount columns,
+  -- averageLengths = mapOverTextColumns columnAverageLength columns
+}
+
+pullCount :: Integer
+pullCount = 10000
+
+rowsCount :: Integer
+rowsCount = 100000
+
 main :: IO ()
 main = do
-  columns <- generateDataColumns 100000
-  printColumnsStat (map columnCount) "Counts" columns
-  printColumnsStat (map columnNullCount) "Null counts" columns
-  printColumnsStat (mapOverNumColumns columnMin) "Number column minimums" columns
-  printColumnsStat (mapOverNumColumns columnMax) "Number column maximums" columns
-  printColumnsStat (mapOverNumColumns columnAverage) "Number column averages" columns
-  printColumnsStat (mapOverTextColumns columnShortestCount) "Text column shortest item count" columns
-  printColumnsStat (mapOverTextColumns columnLongestCount) "Text column longest item count" columns
-  printColumnsStat (mapOverTextColumns columnAverageLength) "Text column average length count" columns
-  printColumnsStat (mapOverTextColumns columnDistinctCounts) "Text column distinct items count" columns
+  columns <- generateDataColumns rowsCount
+  print (calcStats columns)
+  -- printColumnsStat (mapOverTextColumns columnDistinctCounts) "Text column distinct items count" columns
 
 generateDataColumns :: Integer -> IO [DataColumn]
 generateDataColumns n = do
-  raw <- generateRaw n
+  raw <- generateRaw 0
   let headers = rawGeneratedDataHeaders raw
-  let rows = rawGeneratedDataToRows headers raw
+  rows <- generateDataRows headers n
   return (dataRowsToColumns headers rows)
 
-printColumnsStat :: Show a => ([DataColumn] -> a) -> String -> [DataColumn] -> IO ()
-printColumnsStat f description columns = print (description ++ ": " ++ show (f columns))
+generateDataRows :: [ColumnHeader] -> Integer -> IO [DataRow]
+generateDataRows headers n
+  | n <= pullCount = do
+      raw <- generateRaw pullCount
+      return (rawGeneratedDataToRows headers raw)
+  | otherwise = do
+      nextBatch <- generateDataRows headers pullCount
+      rest <- generateDataRows headers (n - pullCount)
+      return (nextBatch ++ rest)
 
 generateRaw :: Integer -> IO String
 generateRaw n = readProcess "./generator" [show n] ""

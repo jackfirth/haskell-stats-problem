@@ -12,7 +12,11 @@ executable haskell-stats-problem
                      , process >= 1.2 && < 1.3
                      , split >= 0.2 && < 0.3
                      , unordered-containers
-  -- hs-source-dirs:
+  ghc-options:
+    -O2
+    -threaded
+    -fprof-auto
+    "-with-rtsopts=-N -p -s -h -i0.1"
   default-language:    Haskell2010
 
 test-suite hspec
